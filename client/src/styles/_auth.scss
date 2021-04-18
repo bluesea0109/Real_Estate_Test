@@ -1,0 +1,17 @@
+.auth-page {
+  min-height: 100vh;
+}
+
+.auth-wrapper {
+  min-width: 500px;
+  top: 100px;
+  @include pos-center('v');
+}
+
+.auth-wrapper.signin {
+  min-width: 400px;
+}
+
+.auth-heading {
+  text-align: center;
+}
