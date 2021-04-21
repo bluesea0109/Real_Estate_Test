@@ -32,7 +32,6 @@ const setApartment = async (req, res, next) => {
 
 router.get('/', authorize(), controller.index);
 router.post('/', authorize([Role.ADMIN, Role.REALTOR]), controller.create);
-// router.get('/:id', authorize(), setApartment, controller.show);
 router.patch(
   '/:id',
   authorize([Role.ADMIN, Role.REALTOR]),
