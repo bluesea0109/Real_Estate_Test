@@ -18,6 +18,18 @@ export const doListUser = function* ({ payload }) {
   }
 };
 
+export const doCreateUser = function* ({ payload }) {
+  try {
+    yield call(axios.post, `/users/`, payload);
+    yield put(actions.createUserSuccess());
+    yield put(actions.listUser({ page: 1 }));
+    notification.success({ message: 'Successfully created user' });
+  } catch (error) {
+    yield put(actions.createUserFail(errorParser(error)));
+    notification.error({ message: getErrorMessage(error) });
+  }
+};
+
 export const doUpdateUser = function* ({ payload }) {
   try {
     const res = yield call(axios.patch, `/users/${payload.id}`, payload);
@@ -43,6 +55,7 @@ export const doDeleteUser = function* ({ payload }) {
 
 export const saga = function* () {
   yield takeLatest(actions.LIST_USER, doListUser);
+  yield takeLatest(actions.CREATE_USER, doCreateUser);
   yield takeLatest(actions.UPDATE_USER, doUpdateUser);
   yield takeLatest(actions.DELETE_USER, doDeleteUser);
 };

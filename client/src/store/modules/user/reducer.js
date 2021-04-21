@@ -2,7 +2,7 @@ import { handleActions, combineActions } from 'redux-actions';
 import { RESET_ERROR } from 'store/modules/global';
 import { resolvedAction, rejectedAction } from 'utils/actions';
 
-import { LIST_USER, UPDATE_USER, DELETE_USER } from './actions';
+import { LIST_USER, CREATE_USER, UPDATE_USER, DELETE_USER } from './actions';
 
 const initialState = {
   users: {
@@ -16,7 +16,7 @@ const initialState = {
 
 export const reducer = handleActions(
   {
-    [combineActions(LIST_USER, UPDATE_USER, DELETE_USER)]: (
+    [combineActions(LIST_USER, CREATE_USER, UPDATE_USER, DELETE_USER)]: (
       state,
       { type },
     ) => ({
@@ -27,6 +27,10 @@ export const reducer = handleActions(
     [resolvedAction(LIST_USER)]: (state, { payload, type }) => ({
       ...state,
       users: payload,
+      status: type,
+    }),
+    [resolvedAction(CREATE_USER)]: (state, { type }) => ({
+      ...state,
       status: type,
     }),
     [resolvedAction(UPDATE_USER)]: (state, { payload, type }) => ({

@@ -1,4 +1,6 @@
 const { Op, where } = require('sequelize');
+const bcrypt = require('bcrypt');
+const { salt } = require('../config/auth.config');
 const Role = require('../helpers/role');
 const db = require('../models');
 const User = db.User;
@@ -41,6 +43,19 @@ module.exports = {
         )
         .catch((err) => next(err));
     }
+  },
+
+  create: async (req, res, next) => {
+    const payload = {
+      ...req.body,
+      password: await bcrypt.hash('password', salt),
+    };
+
+    await User.create(payload)
+      .then((data) => res.json(data))
+      .catch((err) => {
+        next(err);
+      });
   },
 
   show: async (req, res) => {

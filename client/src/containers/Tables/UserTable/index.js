@@ -5,13 +5,16 @@ import {
   DeleteOutlined,
   EditOutlined,
   ExclamationCircleOutlined,
+  PlusOutlined,
 } from '@ant-design/icons';
 import { DEFAULT_PAGE_SIZE } from 'utils/config';
 import {
   LIST_USER,
+  CREATE_USER,
   UPDATE_USER,
   DELETE_USER,
   listUser,
+  createUser,
   updateUser,
   deleteUser,
   selectUsers,
@@ -32,7 +35,11 @@ const UserTable = () => {
   }, [dispatch]);
 
   useEffect(() => {
-    if (status === resolvedAction(UPDATE_USER)) {
+    if (
+      [resolvedAction(CREATE_USER), resolvedAction(UPDATE_USER)].includes(
+        status,
+      )
+    ) {
       handleDrawerClose();
     }
   }, [status]);
@@ -40,6 +47,14 @@ const UserTable = () => {
   function handleDrawerClose() {
     setEditingRecord(null);
     setIsDrawerOpened(false);
+  }
+
+  function handleSubmit(payload) {
+    if (payload.id) {
+      dispatch(updateUser(payload));
+    } else {
+      dispatch(createUser(payload));
+    }
   }
 
   const isLoading = [LIST_USER, UPDATE_USER, DELETE_USER].includes(status);
@@ -104,6 +119,15 @@ const UserTable = () => {
 
   return (
     <React.Fragment>
+      <div className='page-add-record'>
+        <Button
+          type='primary'
+          icon={<PlusOutlined />}
+          onClick={() => setIsDrawerOpened(true)}
+        >
+          Add User
+        </Button>
+      </div>
       <Table
         dataSource={users.results}
         columns={columns}
@@ -125,7 +149,8 @@ const UserTable = () => {
         <UserForm
           initialValues={editingRecord}
           isLoading={isLoading}
-          onSubmit={(values) => dispatch(updateUser(values))}
+          // onSubmit={(values) => dispatch(updateUser(values))}
+          onSubmit={handleSubmit}
         />
       </Drawer>
     </React.Fragment>

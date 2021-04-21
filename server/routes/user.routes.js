@@ -25,6 +25,7 @@ const setUser = async (req, res, next) => {
 };
 
 router.get('/', controller.index);
+router.post('/', controller.create);
 router.get('/:id', setUser, controller.show);
 router.patch('/:id', setUser, controller.update);
 router.delete('/:id', setUser, controller.destroy);

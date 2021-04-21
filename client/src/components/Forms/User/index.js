@@ -34,9 +34,19 @@ const UserForm = ({ initialValues, isLoading, onSubmit }) => {
         <Input placeholder='Name' />
       </Form.Item>
 
-      <Form.Item name='email' label='Email'>
-        <Input placeholder='Email' disabled />
-      </Form.Item>
+      {get(initialValues, 'email') !== undefined ? (
+        <Form.Item name='email' label='Email'>
+          <Input placeholder='Email' disabled />
+        </Form.Item>
+      ) : (
+        <Form.Item
+          name='email'
+          label='Email'
+          rules={[{ required: true, message: 'Please input name!' }]}
+        >
+          <Input placeholder='Email' />
+        </Form.Item>
+      )}
 
       <Form.Item
         name='role'
@@ -45,7 +55,7 @@ const UserForm = ({ initialValues, isLoading, onSubmit }) => {
       >
         <Select placeholder='Select a Role'>
           <Select.Option value={REALTOR}>{upperFirst(REALTOR)}</Select.Option>
-          {get(initialValues, 'role') === CLIENT && (
+          {get(initialValues, 'role') !== REALTOR && (
             <Select.Option value={CLIENT}>{upperFirst(CLIENT)}</Select.Option>
           )}
         </Select>
