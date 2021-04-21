@@ -21,6 +21,8 @@ import {
   selectApartments,
   selectApartmentStatus,
 } from 'store/modules/apartment';
+import { listUser, selectUsers } from 'store/modules/user';
+import { selectCurrentUser } from 'store/modules/auth';
 import { Drawer, ApartmentForm } from 'components';
 import { resolvedAction } from 'utils/actions';
 
@@ -31,6 +33,8 @@ const ApartmentTable = ({ getListApartment }) => {
   const role = useSelector(selectUserRole);
   const apartments = useSelector(selectApartments);
   const status = useSelector(selectApartmentStatus);
+  const realtors = useSelector(selectUsers);
+  const currentUser = useSelector(selectCurrentUser);
   const dispatch = useDispatch();
 
   useEffect(() => {
@@ -44,9 +48,17 @@ const ApartmentTable = ({ getListApartment }) => {
     }
   }, [status]);
 
+  useEffect(() => {
+    if (role === ADMIN) {
+      dispatch(listUser({ role: REALTOR }));
+    }
+  }, [dispatch, role]);
+
   function handleSubmit(payload) {
     if (payload.id) {
-      dispatch(updateApartment(payload));
+      dispatch(
+        updateApartment({ ...payload, currentPage: apartments.currentPage }),
+      );
     } else {
       dispatch(createApartment(payload));
     }
@@ -137,36 +149,37 @@ const ApartmentTable = ({ getListApartment }) => {
     columns.push({
       title: 'Action',
       key: 'action',
-      render: (_, record) => (
-        <React.Fragment>
-          <Button
-            icon={<EditOutlined />}
-            style={{ marginRight: 5 }}
-            shape='circle'
-            size='small'
-            onClick={() => {
-              setEditingRecord(record);
-              setIsDrawerOpened(true);
-            }}
-          />
-          <Button
-            icon={<DeleteOutlined />}
-            shape='circle'
-            size='small'
-            danger
-            onClick={() => {
-              Modal.confirm({
-                title: 'Do you want to delete this aprtment?',
-                icon: <ExclamationCircleOutlined />,
-                maskClosable: true,
-                onOk: () => {
-                  dispatch(deleteApartment(record.id));
-                },
-              });
-            }}
-          />
-        </React.Fragment>
-      ),
+      render: (_, record) =>
+        role === ADMIN || record.realtorId === currentUser.id ? (
+          <React.Fragment>
+            <Button
+              icon={<EditOutlined />}
+              style={{ marginRight: 5 }}
+              shape='circle'
+              size='small'
+              onClick={() => {
+                setEditingRecord(record);
+                setIsDrawerOpened(true);
+              }}
+            />
+            <Button
+              icon={<DeleteOutlined />}
+              shape='circle'
+              size='small'
+              danger
+              onClick={() => {
+                Modal.confirm({
+                  title: 'Do you want to delete this aprtment?',
+                  icon: <ExclamationCircleOutlined />,
+                  maskClosable: true,
+                  onOk: () => {
+                    dispatch(deleteApartment(record.id));
+                  },
+                });
+              }}
+            />
+          </React.Fragment>
+        ) : null,
     });
   }
 
@@ -206,6 +219,8 @@ const ApartmentTable = ({ getListApartment }) => {
         <ApartmentForm
           initialValues={editingRecord}
           isLoading={isLoading}
+          realtors={realtors.results}
+          role={role}
           onSubmit={handleSubmit}
         />
       </Drawer>

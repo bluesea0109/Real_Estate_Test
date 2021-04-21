@@ -30,23 +30,19 @@ module.exports = {
   },
 
   create: async (req, res, next) => {
-    const payload = {
+    let payload = {
       ...req.body,
-      realtorId: req.currentUser.id,
     };
+
+    if (!req.body.realtorId && req.currentUser.role === Role.REALTOR) {
+      payload = { ...payload, realtorId: req.currentUser.id };
+    }
 
     await Apartment.create(payload)
       .then((data) => res.json(data))
       .catch((err) => {
         next(err);
       });
-  },
-
-  show: async (req, res) => {
-    const apartmentId = req.apartment.id;
-    const obj = Object.assign({}, req.apartment.toJSON());
-
-    res.json(obj);
   },
 
   update: async (req, res, next) => {

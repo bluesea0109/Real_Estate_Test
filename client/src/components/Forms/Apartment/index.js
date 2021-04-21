@@ -1,8 +1,18 @@
 import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Form, Input, InputNumber, Switch, AutoComplete } from 'antd';
+import {
+  Button,
+  Form,
+  Input,
+  InputNumber,
+  Switch,
+  AutoComplete,
+  Select,
+} from 'antd';
 
-import { MAP_API_KEY, MAP_BASE_URL } from 'utils/config';
+import { MAP_API_KEY, MAP_BASE_URL, ADMIN } from 'utils/config';
+
+const { Option } = Select;
 
 const layout = {
   labelCol: {
@@ -19,7 +29,13 @@ const tailLayout = {
   },
 };
 
-const ApartmentForm = ({ initialValues, isLoading, onSubmit }) => {
+const ApartmentForm = ({
+  initialValues,
+  isLoading,
+  realtors,
+  role,
+  onSubmit,
+}) => {
   const [addressOptions, setAddressOptions] = useState([]);
   const [longitude, setLongitude] = useState(
     initialValues ? initialValues.longitude : null,
@@ -151,6 +167,35 @@ const ApartmentForm = ({ initialValues, isLoading, onSubmit }) => {
         />
       </Form.Item>
 
+      {role === ADMIN ? (
+        <Form.Item
+          name='realtorId'
+          label='Realtor'
+          rules={[{ required: true, message: 'Please select realtor!' }]}
+        >
+          <Select
+            showSearch
+            style={{ width: 200 }}
+            placeholder='Search to Select'
+            optionFilterProp='children'
+            filterOption={(input, option) =>
+              option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+            }
+            filterSort={(optionA, optionB) =>
+              optionA.children
+                .toLowerCase()
+                .localeCompare(optionB.children.toLowerCase())
+            }
+          >
+            {realtors.map(({ id, name }) => (
+              <Option key={id} value={id}>
+                {name}
+              </Option>
+            ))}
+          </Select>
+        </Form.Item>
+      ) : null}
+
       <Form.Item
         name='rented'
         label='Status'
@@ -187,6 +232,8 @@ ApartmentForm.propTypes = {
     latitude: PropTypes.number,
     longitude: PropTypes.number,
   }),
+  realtors: PropTypes.array.isRequired,
+  role: PropTypes.string.isRequired,
   onSubmit: PropTypes.func.isRequired,
 };
 

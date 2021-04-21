@@ -22,17 +22,25 @@ module.exports = {
 
     if (reqRole !== null) {
       options.where.role = { ...options.where.role, [Op.eq]: reqRole };
-    }
 
-    await User.paginate(options)
-      .then((data) =>
-        res.json({
-          results: data.docs,
-          currentPage: page,
-          totalCount: data.total,
-        }),
-      )
-      .catch((err) => next(err));
+      await User.findAll(options)
+        .then((data) =>
+          res.json({
+            results: data,
+          }),
+        )
+        .catch((err) => next(err));
+    } else {
+      await User.paginate(options)
+        .then((data) =>
+          res.json({
+            results: data.docs,
+            currentPage: page,
+            totalCount: data.total,
+          }),
+        )
+        .catch((err) => next(err));
+    }
   },
 
   show: async (req, res) => {

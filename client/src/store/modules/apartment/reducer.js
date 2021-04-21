@@ -49,14 +49,8 @@ export const reducer = handleActions(
       apartment: payload,
       status: type,
     }),
-    [resolvedAction(UPDATE_APARTMENT)]: (state, { payload, type }) => ({
+    [resolvedAction(UPDATE_APARTMENT)]: (state, { type }) => ({
       ...state,
-      apartments: {
-        ...state.apartments,
-        results: state.apartments.results.map((apartment) =>
-          apartment.id === payload.id ? payload : apartment,
-        ),
-      },
       status: type,
     }),
     [resolvedAction(DELETE_APARTMENT)]: (state, { type }) => ({

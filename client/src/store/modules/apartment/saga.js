@@ -44,6 +44,7 @@ export const doUpdateApartment = function* ({ payload }) {
   try {
     const res = yield call(axios.patch, `/apartments/${payload.id}`, payload);
     yield put(actions.updateApartmentSuccess(res.data));
+    yield put(actions.listApartment({ page: payload.currentPage }));
     notification.success({ message: 'Successfully updated apartment' });
   } catch (error) {
     yield put(actions.updateApartmentFail(errorParser(error)));
