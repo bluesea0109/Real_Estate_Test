@@ -30,16 +30,6 @@ export const doCreateApartment = function* ({ payload }) {
   }
 };
 
-export const doGetApartment = function* ({ payload }) {
-  try {
-    const res = yield call(axios.get, `/apartments/${payload}`);
-    yield put(actions.getApartmentSuccess(res.data));
-  } catch (error) {
-    yield put(actions.getApartmentFail(errorParser(error)));
-    notification.error({ message: getErrorMessage(error) });
-  }
-};
-
 export const doUpdateApartment = function* ({ payload }) {
   try {
     const res = yield call(axios.patch, `/apartments/${payload.id}`, payload);
@@ -67,7 +57,6 @@ export const doDeleteApartment = function* ({ payload }) {
 export const saga = function* () {
   yield takeLatest(actions.LIST_APARTMENT, doListApartment);
   yield takeLatest(actions.CREATE_APARTMENT, doCreateApartment);
-  yield takeLatest(actions.GET_APARTMENT, doGetApartment);
   yield takeLatest(actions.UPDATE_APARTMENT, doUpdateApartment);
   yield takeLatest(actions.DELETE_APARTMENT, doDeleteApartment);
 };
