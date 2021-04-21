@@ -1,4 +1,4 @@
-const { Op } = require('sequelize');
+const { Op, where } = require('sequelize');
 const Role = require('../helpers/role');
 const db = require('../models');
 const User = db.User;
@@ -7,6 +7,7 @@ module.exports = {
   index: async (req, res, next) => {
     const page = Number(req.query.page) || 1;
     const per_page = Number(req.query.per_page) || 10;
+    const reqRole = req.query.role || null;
 
     let options = {
       page: page,
@@ -18,6 +19,10 @@ module.exports = {
         },
       },
     };
+
+    if (reqRole !== null) {
+      options.where.role = { ...options.where.role, [Op.eq]: reqRole };
+    }
 
     await User.paginate(options)
       .then((data) =>
