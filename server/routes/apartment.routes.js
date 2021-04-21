@@ -18,10 +18,8 @@ const setApartment = async (req, res, next) => {
 
       if (
         req.method !== 'GET' &&
-        // req.currentUser.role === Role.REALTOR &&
-        // req.currentUser.id !== apartment.realtorId
-        req.currentUser.role !== Role.REALTOR &&
-        req.currentUser.role !== Role.ADMIN
+        req.currentUser.role === Role.REALTOR &&
+        req.currentUser.id !== apartment.realtorId
       ) {
         return res.status(401).json({ message: 'Unauthorized' });
       }
