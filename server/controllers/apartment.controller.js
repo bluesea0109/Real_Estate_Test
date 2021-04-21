@@ -45,6 +45,12 @@ module.exports = {
       });
   },
 
+  show: async (req, res) => {
+    const obj = Object.assign({}, req.apartment.toJSON());
+
+    res.json(obj);
+  },
+
   update: async (req, res, next) => {
     await req.apartment
       .update(req.body)
