@@ -81,6 +81,8 @@ module.exports = {
       }
 
       if (req.body.role === Role.CLIENT && req.user.role === Role.REALTOR) {
+        flag = true;
+
         try {
           let result = await sequelize.transaction(async (t) => {
             await Apartment.destroy({
@@ -92,7 +94,6 @@ module.exports = {
           });
 
           if (result) {
-            flag = true;
             res.json(result);
           }
         } catch (err) {
@@ -101,7 +102,7 @@ module.exports = {
       }
     }
 
-    if (!flag && req.user.role !== Role.REALTOR) {
+    if (!flag) {
       req.user
         .update(req.body)
         .then((data) => res.json(data))
