@@ -11,15 +11,15 @@ const ApartmentPage = () => {
     dispatch(listApartment());
   }, [dispatch]);
 
-  const getListApartment = (page) => {
-    dispatch(listApartment({ page }));
+  const getListApartment = (page, filter) => {
+    dispatch(listApartment({ ...filter, page }));
   };
 
   return (
     <div className='page user-page'>
       <h1 className='page-heading'>Apartments</h1>
-      <ApartmentMap />
       <ApartmentTable getListApartment={getListApartment} />
+      <ApartmentMap />
     </div>
   );
 };

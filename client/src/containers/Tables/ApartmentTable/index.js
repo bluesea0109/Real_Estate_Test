@@ -1,12 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import PropTypes from 'prop-types';
 import { useSelector, useDispatch } from 'react-redux';
-import { Button, Modal, Table, Tooltip } from 'antd';
+import { Button, Modal, Table, Tooltip, Input, Space } from 'antd';
 import {
   DeleteOutlined,
   EditOutlined,
   ExclamationCircleOutlined,
   PlusOutlined,
+  SearchOutlined,
 } from '@ant-design/icons';
 import { ADMIN, REALTOR, DEFAULT_PAGE_SIZE } from 'utils/config';
 import { selectUserRole } from 'store/modules/auth';
@@ -29,6 +30,7 @@ import { resolvedAction } from 'utils/actions';
 const ApartmentTable = ({ getListApartment }) => {
   const [editingRecord, setEditingRecord] = useState(null);
   const [isDrawerOpened, setIsDrawerOpened] = useState(false);
+  const [selectedKeys, setSelectedKeys] = useState({});
 
   const role = useSelector(selectUserRole);
   const apartments = useSelector(selectApartments);
@@ -76,6 +78,64 @@ const ApartmentTable = ({ getListApartment }) => {
     DELETE_APARTMENT,
   ].includes(status);
 
+  const setSearchValue = (dataIndex, name, e) => {
+    setSelectedKeys({
+      ...selectedKeys,
+      [dataIndex + '_' + name]: e.target.value,
+    });
+  };
+
+  const getColumnSearchProps = (dataIndex) => ({
+    filterDropdown: ({ confirm, clearFilters }) => (
+      <div style={{ padding: 8 }}>
+        <Input
+          placeholder={`Input min ${dataIndex}`}
+          value={selectedKeys[dataIndex + '_min']}
+          onChange={(e) => setSearchValue(dataIndex, 'min', e)}
+          style={{ width: 188, marginBottom: 8, display: 'block' }}
+        />
+
+        <Input
+          placeholder={`Input max ${dataIndex}`}
+          value={selectedKeys[dataIndex + '_max']}
+          onChange={(e) => setSearchValue(dataIndex, 'max', e)}
+          style={{ width: 188, marginBottom: 8, display: 'block' }}
+        />
+
+        <Space>
+          <Button
+            type='primary'
+            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            icon={<SearchOutlined />}
+            size='small'
+            style={{ width: 90 }}
+          >
+            Search
+          </Button>
+          <Button
+            onClick={() => handleReset(clearFilters)}
+            size='small'
+            style={{ width: 90 }}
+          >
+            Reset
+          </Button>
+        </Space>
+      </div>
+    ),
+    filterIcon: (filtered) => (
+      <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
+    ),
+  });
+
+  const handleSearch = (selectedKeys, confirm, dataIndex) => {
+    confirm();
+    getListApartment(1, selectedKeys);
+  };
+
+  const handleReset = (clearFilters) => {
+    clearFilters();
+  };
+
   const columns = [
     {
       title: 'Id',
@@ -114,16 +174,19 @@ const ApartmentTable = ({ getListApartment }) => {
       title: 'Floor Area Size',
       dataIndex: 'floorAreaSize',
       key: 'floorAreaSize',
+      ...getColumnSearchProps('floorAreaSize'),
     },
     {
       title: 'Price Per Month',
       dataIndex: 'pricePerMonth',
       key: 'pricePerMonth',
+      ...getColumnSearchProps('pricePerMonth'),
     },
     {
       title: 'Number of Rooms',
       dataIndex: 'numberOfRooms',
       key: 'numberOfRooms',
+      ...getColumnSearchProps('numberOfRooms'),
     },
     {
       title: 'Address',
@@ -209,7 +272,9 @@ const ApartmentTable = ({ getListApartment }) => {
           current: apartments.currentPage,
           size: 'default',
         }}
-        onChange={(pagination) => getListApartment(pagination.current)}
+        onChange={(pagination) =>
+          getListApartment(pagination.current, selectedKeys)
+        }
       />
       <Drawer
         title='Aparment'

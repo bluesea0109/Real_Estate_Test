@@ -1,3 +1,4 @@
+const { Op } = require('sequelize');
 const Role = require('../helpers/role');
 const db = require('../models');
 const Apartment = db.Apartment;
@@ -14,8 +15,25 @@ module.exports = {
       paginate: per_page,
     };
 
+    const INF = 10000000;
+
+    options.where = {
+      floorAreaSize: {
+        [Op.gte]: Number(req.query.floorAreaSize_min) || 0,
+        [Op.lte]: Number(req.query.floorAreaSize_max) || INF,
+      },
+      pricePerMonth: {
+        [Op.gte]: Number(req.query.pricePerMonth_min) || 0,
+        [Op.lte]: Number(req.query.pricePerMonth_max) || INF,
+      },
+      numberOfRooms: {
+        [Op.gte]: Number(req.query.pricePerMonth_min) || 0,
+        [Op.lte]: Number(req.query.pricePerMonth_max) || INF,
+      },
+    };
+
     if (req.currentUser.role === Role.CLIENT) {
-      options.where = { rented: false };
+      options.where = { ...options.where, rented: false };
     }
 
     await Apartment.paginate(options)

@@ -1,4 +1,4 @@
-const { Op, where } = require('sequelize');
+const { Op } = require('sequelize');
 const bcrypt = require('bcrypt');
 const { salt } = require('../config/auth.config');
 const Role = require('../helpers/role');
