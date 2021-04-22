@@ -1,10 +1,11 @@
-const sequelize = require('sequelize');
+const { Op } = require('sequelize');
 const bcrypt = require('bcrypt');
 const { salt } = require('../config/auth.config');
 const Role = require('../helpers/role');
 const db = require('../models');
 const User = db.User;
 const Apartment = db.Apartment;
+const sequelize = db.sequelize;
 
 module.exports = {
   index: (req, res, next) => {
@@ -18,7 +19,7 @@ module.exports = {
       worder: [['id', 'ASC']],
       where: {
         role: {
-          [sequelize.Op.not]: Role.ADMIN,
+          [Op.not]: Role.ADMIN,
         },
       },
     };
@@ -26,7 +27,7 @@ module.exports = {
     if (!!reqRole) {
       options.where.role = {
         ...options.where.role,
-        [sequelize.Op.eq]: reqRole,
+        [Op.eq]: reqRole,
       };
 
       User.findAll(options)
@@ -90,16 +91,17 @@ module.exports = {
             return await req.user.update(req.body, { transaction: t });
           });
 
-          console.log(result);
+          if (result) {
+            flag = true;
+            res.json(result);
+          }
         } catch (err) {
-          console.log(err);
+          next(err);
         }
       }
     }
 
-    console.log('++++++come here again??+++++');
     if (!flag && req.user.role !== Role.REALTOR) {
-      console.log('+++++++++what about there?++++++++++++++++++');
       req.user
         .update(req.body)
         .then((data) => res.json(data))
