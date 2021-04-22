@@ -85,39 +85,37 @@ const ApartmentTable = ({ getListApartment }) => {
     });
   };
 
+  const handleSearch = (confirm) => {
+    confirm();
+    getListApartment(1, selectedKeys);
+  };
+
   const getColumnSearchProps = (dataIndex) => ({
-    filterDropdown: ({ confirm, clearFilters }) => (
+    filterDropdown: ({ confirm }) => (
       <div style={{ padding: 8 }}>
         <Input
           placeholder={`Input min ${dataIndex}`}
           value={selectedKeys[dataIndex + '_min']}
           onChange={(e) => setSearchValue(dataIndex, 'min', e)}
-          style={{ width: 188, marginBottom: 8, display: 'block' }}
+          style={{ width: 120, marginBottom: 8, display: 'block' }}
         />
 
         <Input
           placeholder={`Input max ${dataIndex}`}
           value={selectedKeys[dataIndex + '_max']}
           onChange={(e) => setSearchValue(dataIndex, 'max', e)}
-          style={{ width: 188, marginBottom: 8, display: 'block' }}
+          style={{ width: 120, marginBottom: 8, display: 'block' }}
         />
 
         <Space>
           <Button
             type='primary'
-            onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+            onClick={() => handleSearch(confirm)}
             icon={<SearchOutlined />}
             size='small'
-            style={{ width: 90 }}
+            style={{ width: 120 }}
           >
             Search
-          </Button>
-          <Button
-            onClick={() => handleReset(clearFilters)}
-            size='small'
-            style={{ width: 90 }}
-          >
-            Reset
           </Button>
         </Space>
       </div>
@@ -126,15 +124,6 @@ const ApartmentTable = ({ getListApartment }) => {
       <SearchOutlined style={{ color: filtered ? '#1890ff' : undefined }} />
     ),
   });
-
-  const handleSearch = (selectedKeys, confirm, dataIndex) => {
-    confirm();
-    getListApartment(1, selectedKeys);
-  };
-
-  const handleReset = (clearFilters) => {
-    clearFilters();
-  };
 
   const columns = [
     {

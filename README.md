@@ -1,3 +1,9 @@
+### Prerequisites
+
+1. **node**@_12.21.0+_
+2. **npm**@_6.14.11+_
+3. **mysql**@_5.5.7+_
+
 ### To start project
 
 ### client
