@@ -13,7 +13,6 @@ module.exports = {
       order: [['createdAt', 'DESC']],
       page: page,
       paginate: per_page,
-      where: {},
     };
 
     const filters = ['floorAreaSize', 'pricePerMonth', 'numberOfRooms'];
@@ -21,16 +20,27 @@ module.exports = {
     filters.forEach((filter) => {
       const min = Number(req.query[`${filter}_min`]);
       const max = Number(req.query[`${filter}_max`]);
+
+      let where = {};
+
       if (!isNaN(min)) {
-        options.where = {
-          ...options.where,
+        where[filter] = {
+          ...where[filter],
           [Op.gte]: min,
         };
       }
+
       if (!isNaN(max)) {
+        where[filter] = {
+          ...where[filter],
+          [Op.lte]: max,
+        };
+      }
+
+      if (where) {
         options.where = {
           ...options.where,
-          [Op.lte]: max,
+          ...where,
         };
       }
     });
