@@ -13,65 +13,27 @@ module.exports = {
       order: [['createdAt', 'DESC']],
       page: page,
       paginate: per_page,
+      where: {},
     };
 
-    let floorAreaSize = null;
-    let pricePerMonth = null;
-    let numberOfRooms = null;
+    const filters = ['floorAreaSize', 'pricePerMonth', 'numberOfRooms'];
 
-    if (Number(req.query.floorAreaSize_min)) {
-      floorAreaSize = {
-        ...floorAreaSize,
-        [Op.gte]: Number(req.query.floorAreaSize_min),
-      };
-    }
-
-    if (Number(req.query.floorAreaSize_max)) {
-      floorAreaSize = {
-        ...floorAreaSize,
-        [Op.lte]: Number(req.query.floorAreaSize_max),
-      };
-    }
-
-    if (floorAreaSize) {
-      options.where = { ...options.where, floorAreaSize };
-    }
-
-    if (Number(req.query.pricePerMonth_min)) {
-      pricePerMonth = {
-        ...pricePerMonth,
-        [Op.gte]: Number(req.query.pricePerMonth_min),
-      };
-    }
-
-    if (Number(req.query.pricePerMonth_max)) {
-      pricePerMonth = {
-        ...pricePerMonth,
-        [Op.lte]: Number(req.query.pricePerMonth_max),
-      };
-    }
-
-    if (pricePerMonth) {
-      options.where = { ...options.where, pricePerMonth };
-    }
-
-    if (Number(req.query.numberOfRooms_min)) {
-      numberOfRooms = {
-        ...numberOfRooms,
-        [Op.gte]: Number(req.query.numberOfRooms_min),
-      };
-    }
-
-    if (Number(req.query.numberOfRooms_max)) {
-      numberOfRooms = {
-        ...numberOfRooms,
-        [Op.lte]: Number(req.query.numberOfRooms_max),
-      };
-    }
-
-    if (numberOfRooms) {
-      options.where = { ...options.where, numberOfRooms };
-    }
+    filters.forEach((filter) => {
+      const min = Number(req.query[`${filter}_min`]);
+      const max = Number(req.query[`${filter}_max`]);
+      if (!isNaN(min)) {
+        options.where = {
+          ...options.where,
+          [Op.gte]: min,
+        };
+      }
+      if (!isNaN(max)) {
+        options.where = {
+          ...options.where,
+          [Op.lte]: max,
+        };
+      }
+    });
 
     if (req.currentUser.role === Role.CLIENT) {
       options.where = { ...options.where, rented: false };
