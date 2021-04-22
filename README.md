@@ -6,6 +6,18 @@
 
 ### To start project
 
+Set the following database variables in `server/config/config.json` file for your development environment:
+
+```
+"development": {
+  "username": "root", // Need to update your own username
+  "password": "password", // Need to update your own password
+  "database": "apartments_db",
+  "host": "127.0.0.1",
+  "dialect": "mysql"
+},
+```
+
 ### client
 
 - yarn install
