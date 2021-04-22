@@ -55,9 +55,7 @@ const UserForm = ({ initialValues, isLoading, onSubmit }) => {
       >
         <Select placeholder='Select a Role'>
           <Select.Option value={REALTOR}>{upperFirst(REALTOR)}</Select.Option>
-          {get(initialValues, 'role') !== REALTOR && (
-            <Select.Option value={CLIENT}>{upperFirst(CLIENT)}</Select.Option>
-          )}
+          <Select.Option value={CLIENT}>{upperFirst(CLIENT)}</Select.Option>
         </Select>
       </Form.Item>
 

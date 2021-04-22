@@ -1,9 +1,10 @@
-const { Op } = require('sequelize');
+const sequelize = require('sequelize');
 const bcrypt = require('bcrypt');
 const { salt } = require('../config/auth.config');
 const Role = require('../helpers/role');
 const db = require('../models');
 const User = db.User;
+const Apartment = db.Apartment;
 
 module.exports = {
   index: (req, res, next) => {
@@ -17,13 +18,16 @@ module.exports = {
       worder: [['id', 'ASC']],
       where: {
         role: {
-          [Op.not]: Role.ADMIN,
+          [sequelize.Op.not]: Role.ADMIN,
         },
       },
     };
 
     if (!!reqRole) {
-      options.where.role = { ...options.where.role, [Op.eq]: reqRole };
+      options.where.role = {
+        ...options.where.role,
+        [sequelize.Op.eq]: reqRole,
+      };
 
       User.findAll(options)
         .then((data) =>
@@ -62,7 +66,12 @@ module.exports = {
     res.json(req.user);
   },
 
-  update: (req, res, next) => {
+  update: async (req, res, next) => {
+    let flag = false;
+
+    // block to update email
+    delete req.body.email;
+
     if (req.body.role) {
       if (req.body.role === Role.ADMIN) {
         return res
@@ -71,19 +80,31 @@ module.exports = {
       }
 
       if (req.body.role === Role.CLIENT && req.user.role === Role.REALTOR) {
-        return res
-          .status(400)
-          .json({ message: 'Not allowed to downgrade to CLIENT' });
+        try {
+          let result = await sequelize.transaction(async (t) => {
+            await Apartment.destroy({
+              where: { realtorId: req.body.id },
+              transaction: t,
+            });
+
+            return await req.user.update(req.body, { transaction: t });
+          });
+
+          console.log(result);
+        } catch (err) {
+          console.log(err);
+        }
       }
     }
 
-    // block to update email
-    delete req.body.email;
-
-    req.user
-      .update(req.body)
-      .then((data) => res.json(data))
-      .catch((err) => next(err));
+    console.log('++++++come here again??+++++');
+    if (!flag && req.user.role !== Role.REALTOR) {
+      console.log('+++++++++what about there?++++++++++++++++++');
+      req.user
+        .update(req.body)
+        .then((data) => res.json(data))
+        .catch((err) => next(err));
+    }
   },
 
   destroy: (req, res, next) => {
