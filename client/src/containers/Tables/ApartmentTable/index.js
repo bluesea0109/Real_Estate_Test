@@ -57,6 +57,7 @@ const ApartmentTable = ({ getListApartment }) => {
   }, [dispatch, role]);
 
   function handleSubmit(payload) {
+    setSelectedKeys({});
     if (payload.id) {
       dispatch(
         updateApartment({ ...payload, currentPage: apartments.currentPage }),
@@ -94,14 +95,16 @@ const ApartmentTable = ({ getListApartment }) => {
     filterDropdown: ({ confirm }) => (
       <div style={{ padding: 8 }}>
         <Input
-          placeholder={`Input min ${dataIndex}`}
+          type='number'
+          placeholder='min value'
           value={selectedKeys[dataIndex + '_min']}
           onChange={(e) => setSearchValue(dataIndex, 'min', e)}
           style={{ width: 120, marginBottom: 8, display: 'block' }}
         />
 
         <Input
-          placeholder={`Input max ${dataIndex}`}
+          type='number'
+          placeholder='max value'
           value={selectedKeys[dataIndex + '_max']}
           onChange={(e) => setSearchValue(dataIndex, 'max', e)}
           style={{ width: 120, marginBottom: 8, display: 'block' }}

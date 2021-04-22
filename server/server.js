@@ -2,7 +2,6 @@ const express = require('express');
 const router = require('./routes');
 const cors = require('cors');
 const errorHandler = require('./helpers/error-handler');
-const rateLimiter = require('./helpers/rate-limiter');
 
 const app = express();
 
@@ -21,7 +20,6 @@ app.use(function (req, res, next) {
 
 app.use('/api', router);
 app.use(errorHandler);
-app.use(rateLimiter);
 
 app.listen(4000, () => {
   console.log('Server is listening on port 4000');

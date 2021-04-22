@@ -5,7 +5,7 @@ export function getAuthToken() {
 }
 
 export function setAuthToken(data) {
-  localStorage.setItem(AUTH_ID, data);
+  localStorage.setItem(AUTH_ID, 'Bearer ' + data);
 }
 
 export function clearAuthToken() {

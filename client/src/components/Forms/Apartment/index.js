@@ -54,6 +54,9 @@ const ApartmentForm = ({
   }
 
   const onSearch = (searchValue) => {
+    setLatitude(null);
+    setLongitude(null);
+
     if (!searchValue) {
       return;
     }
@@ -210,7 +213,7 @@ const ApartmentForm = ({
           type='primary'
           htmlType='submit'
           loading={isLoading}
-          disabled={isLoading}
+          disabled={isLoading || (!longitude && !latitude)}
         >
           Submit
         </Button>

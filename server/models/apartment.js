@@ -42,9 +42,15 @@ module.exports = (sequelize, DataTypes) => {
       floorAreaSize: DataTypes.FLOAT,
       pricePerMonth: DataTypes.FLOAT,
       numberOfRooms: DataTypes.INTEGER,
-      latitude: DataTypes.FLOAT,
-      longitude: DataTypes.FLOAT,
-      address: DataTypes.STRING,
+      latitude: { type: DataTypes.FLOAT, allowNull: false },
+      longitude: { type: DataTypes.FLOAT, allowNull: false },
+      address: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        unique: {
+          msg: 'Address is already in use!',
+        },
+      },
       rented: DataTypes.BOOLEAN,
       realtorId: DataTypes.INTEGER,
     },

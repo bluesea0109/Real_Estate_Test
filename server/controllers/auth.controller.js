@@ -7,7 +7,7 @@ const User = db.User;
 const Auth = {
   signup: async function (req, res, next) {
     const { email, password } = req.body;
-    if (!!email === false || !!password === false) {
+    if (!email || !password) {
       res.status(400).json('Email or password is missing');
     }
 
@@ -42,7 +42,7 @@ const Auth = {
       });
 
       // check user is empty or not
-      if (user === null) {
+      if (!user) {
         return res.status(400).json({
           message: 'Email or password is not correct',
         });
@@ -64,7 +64,7 @@ const Auth = {
       );
 
       res.json({ user, token });
-    } catch (ex) {
+    } catch (e) {
       res.status(400).json({
         message: 'Invalid email and password',
       });

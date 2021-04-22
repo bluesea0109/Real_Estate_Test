@@ -13,14 +13,7 @@ const authorize = (roles = []) => {
   return [
     // authenticate JWT token and attach user to request object (req.currentUser)
     (req, res, next) => {
-      const tokenArray = req.headers['authorization'].split(' ');
-      let token;
-
-      if (tokenArray.length > 1) {
-        token = tokenArray[1];
-      } else {
-        token = tokenArray[0];
-      }
+      const token = req.headers['authorization'].split(' ')[1];
 
       if (!token) {
         return res.status(403).send({

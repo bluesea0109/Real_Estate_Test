@@ -31,6 +31,8 @@ module.exports = {
       },
       address: {
         type: Sequelize.STRING,
+        allowNull: false,
+        unique: true,
       },
       rented: {
         type: Sequelize.BOOLEAN,

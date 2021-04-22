@@ -6,10 +6,10 @@ const db = require('../models');
 const User = db.User;
 
 module.exports = {
-  index: async (req, res, next) => {
+  index: (req, res, next) => {
     const page = Number(req.query.page) || 1;
     const per_page = Number(req.query.per_page) || 10;
-    const reqRole = req.query.role || null;
+    const reqRole = req.query.role;
 
     let options = {
       page: page,
@@ -22,10 +22,10 @@ module.exports = {
       },
     };
 
-    if (reqRole !== null) {
+    if (!!reqRole) {
       options.where.role = { ...options.where.role, [Op.eq]: reqRole };
 
-      await User.findAll(options)
+      User.findAll(options)
         .then((data) =>
           res.json({
             results: data,
@@ -33,7 +33,7 @@ module.exports = {
         )
         .catch((err) => next(err));
     } else {
-      await User.paginate(options)
+      User.paginate(options)
         .then((data) =>
           res.json({
             results: data.docs,
@@ -51,18 +51,18 @@ module.exports = {
       password: await bcrypt.hash('password', salt),
     };
 
-    await User.create(payload)
+    User.create(payload)
       .then((data) => res.json(data))
       .catch((err) => {
         next(err);
       });
   },
 
-  show: async (req, res) => {
+  show: (req, res) => {
     res.json(req.user);
   },
 
-  update: async (req, res, next) => {
+  update: (req, res, next) => {
     if (req.body.role) {
       if (req.body.role === Role.ADMIN) {
         return res
@@ -80,14 +80,14 @@ module.exports = {
     // block to update email
     delete req.body.email;
 
-    await req.user
+    req.user
       .update(req.body)
       .then((data) => res.json(data))
       .catch((err) => next(err));
   },
 
-  destroy: async (req, res, next) => {
-    await req.user
+  destroy: (req, res, next) => {
+    req.user
       .destroy()
       .then(() => res.json(true))
       .catch((err) => next(err));
