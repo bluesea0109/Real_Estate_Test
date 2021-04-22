@@ -23,14 +23,14 @@ module.exports = {
 
       let where = {};
 
-      if (!isNaN(min)) {
+      if (!isNaN(min) && min) {
         where[filter] = {
           ...where[filter],
           [Op.gte]: min,
         };
       }
 
-      if (!isNaN(max)) {
+      if (!isNaN(max) && max) {
         where[filter] = {
           ...where[filter],
           [Op.lte]: max,

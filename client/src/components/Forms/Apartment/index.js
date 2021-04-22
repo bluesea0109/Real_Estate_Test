@@ -236,7 +236,7 @@ ApartmentForm.propTypes = {
     longitude: PropTypes.number,
   }),
   realtors: PropTypes.array.isRequired,
-  role: PropTypes.string.isRequired,
+  role: PropTypes.string,
   onSubmit: PropTypes.func.isRequired,
 };
 
