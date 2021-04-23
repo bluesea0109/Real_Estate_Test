@@ -20,6 +20,10 @@ module.exports = {
           .json({ message: 'Password must be at least 8 characters' });
       }
       req.currentUser.password = await bcrypt.hash(req.body.newPassword, salt);
+    } else {
+      return res
+        .status(400)
+        .json({ message: 'Old password must be provided!' });
     }
 
     // block to change email, role
