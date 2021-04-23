@@ -2,6 +2,7 @@ const { Op } = require('sequelize');
 const Role = require('../helpers/role');
 const db = require('../models');
 const Apartment = db.Apartment;
+const User = db.User;
 
 module.exports = {
   index: (req, res, next) => {
@@ -83,9 +84,21 @@ module.exports = {
   },
 
   update: (req, res, next) => {
-    req.apartment
-      .update(req.body)
-      .then((data) => res.json(data))
+    User.findByPk(req.body.realtorId)
+      .then((user) => {
+        req.body = {
+          ...req.body,
+          realtor: {
+            id: user.id,
+            name: user.name,
+          },
+        };
+
+        req.apartment
+          .update(req.body)
+          .then((data) => res.json(data))
+          .catch((err) => next(err));
+      })
       .catch((err) => next(err));
   },
 

@@ -7,8 +7,8 @@ const controller = require('../controllers/apartment.controller');
 const db = require('../models');
 const Apartment = db.Apartment;
 
-const setApartment = async (req, res, next) => {
-  await Apartment.findByPk(req.params.id, {
+const setApartment = (req, res, next) => {
+  Apartment.findByPk(req.params.id, {
     include: [{ model: db.User, as: 'realtor', attributes: ['id', 'name'] }],
   })
     .then((apartment) => {

@@ -4,14 +4,14 @@ const controller = require('../controllers/user.controller');
 const db = require('../models');
 const User = db.User;
 
-const setUser = async (req, res, next) => {
+const setUser = (req, res, next) => {
   if (req.currentUser.id === Number(req.params.id)) {
     return res.status(400).send({
       message: 'Not allowed to get own info',
     });
   }
 
-  await User.findByPk(req.params.id)
+  User.findByPk(req.params.id)
     .then((user) => {
       if (!user) {
         return res.status(404).send({
