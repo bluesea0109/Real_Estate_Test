@@ -1,5 +1,7 @@
 'use strict';
 const { Model } = require('sequelize');
+const { CLIENT, ROLES } = require('../helpers/role');
+
 module.exports = (sequelize, DataTypes) => {
   class User extends Model {
     /**
@@ -51,7 +53,8 @@ module.exports = (sequelize, DataTypes) => {
       },
       role: {
         type: DataTypes.ENUM,
-        values: ['admin', 'realtor', 'client'],
+        values: ROLES,
+        defaultValue: CLIENT,
       },
     },
     {
